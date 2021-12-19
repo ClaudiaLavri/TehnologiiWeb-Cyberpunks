@@ -12,3 +12,8 @@ To run:
 ```
 npm run start
 ```
+To close server:
+
+```
+**CTRL + 'C'
+```
