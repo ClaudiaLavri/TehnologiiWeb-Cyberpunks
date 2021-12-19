@@ -9,5 +9,6 @@ npm install -g --save-dev nodemon;
 ```
 
 To run:
-
+```
 npm run start
+```
