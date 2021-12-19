@@ -3,6 +3,69 @@ const app = express();
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 
+//initializare sequelize
+const Sequelize = require('sequelize');
+const sequelize = new Sequelize({
+    dialect: 'sqlite',
+    storage: './WasteFood.db'
+})
+
+//conectare sqlite
+sequelize
+    .authenticate()
+    .then(() => {
+        console.log('Connection has been established successfully.');
+    })
+    .catch(err => {
+        console.log('Unable to connect to the database: ', err);
+    });
+
+sequelize.getQueryInterface().showAllSchemas().then((tableObj) => {
+    console.log(tableObj);
+    // console.log(tableObj.keys(rawAttributes));
+});
+
+var Useri = sequelize.define('Useri', {
+    id_user: Sequelize.INTEGER,
+    nume_user: Sequelize.STRING,
+    prenume_user: Sequelize.STRING,
+    mail: Sequelize.STRING,
+    parola: Sequelize.STRING
+});
+
+var Alimente = sequelize.define('Alimente', {
+    id_aliment:
+    {
+        type: Sequelize.INTEGER
+    },
+    nume_aliment: {
+        type: Sequelize.STRING
+    },
+    categorie: {
+        type: Sequelize.STRING
+    },
+    data_expirare:
+    {
+        type: Sequelize.DATE
+    },
+    id_user: {
+        type: Sequelize.INTEGER
+    }
+});
+
+var Grupuri = sequelize.define("Grupuri", {
+    id_grup: Sequelize.INTEGER,
+    id_user: Sequelize.INTEGER,
+    id_user_detinator: Sequelize.INTEGER,
+    nume_grup: Sequelize.STRING
+});
+
+var Rezervari = sequelize.define("Rezervari", {
+    id_rezervare: Sequelize.INTEGER,
+    id_user: Sequelize.INTEGER,
+    id_aliment: Sequelize.INTEGER
+});
+
 //creare rute
 const rezRoutes = require('./api/routes/rezervari');
 const alimRoutes = require('./api/routes/alimente');
@@ -47,3 +110,4 @@ app.use((error, req, res, next) => {
 });
 
 module.exports = app;
+module.exports = Alimente;

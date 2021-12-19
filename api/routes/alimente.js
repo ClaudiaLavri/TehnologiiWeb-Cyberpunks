@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const { Alimente } = require('../../app.js');
+
 
 //metoda de get
 //returneaza un response cu statusul 200(succes) si mesaj
@@ -11,17 +13,18 @@ router.get('/', (req, res, next) => {
 
 //metoda de post
 //returneaza un response cu statusul 201(creare date), mesaj, elementul creat
-router.post('/', (req, res, next) => {
-    const aliment = {
+router.post('/', async (req, res, next) => {
+    const aliment = await Alimente.create({
         id_aliment: req.body.id_aliment,
         nume_aliment: req.body.nume_aliment,
         categorie: req.body.categorie,
         data_expirare: req.body.data_expirare,
         id_user: req.body.id_user
-    }
+    });
     res.status(201).json({
         message: "Handling POST requests to /alimente",
         alimentCreat: aliment
+
     });
 });
 

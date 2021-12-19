@@ -14,7 +14,8 @@ router.get('/', (req, res, next) => {
 router.post('/', (req, res, next) => {
     const rezervare = {
         id_rezervare: req.body.id_rezervare,
-        id_user: req.body.id_user
+        id_user: req.body.id_user,
+        id_aliment: req.body.id_aliment
     }
 
     res.status(201).json({
