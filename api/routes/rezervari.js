@@ -1,26 +1,36 @@
 const express = require('express');
 const router = express.Router();
+const Rezervare = require('../../models/Aliment.js')
 
 //metoda de get
 //returneaza un response cu statusul 200(succes) si mesaj
 router.get('/', (req, res, next) => {
-    res.status(200).json({
-        message: "Rezervarile au fost gasite!"
-    });
+    // res.status(200).json({
+    //     message: "Rezervari"
+    // })
+    Rezervare.findAll()
+        .then(rezervare => {
+            console.log(rezervare);
+            res.sendStatus(200);
+        })
+        .catch(err => console.log(err));
+    // res.status(200).json({
+    //     message: "Rezervarile au fost gasite!"
+    console.log(Rezervare);
 });
 
 //metoda de post
 //returneaza un response cu statusul 201(creare date), mesaj, elementul creat
 router.post('/', (req, res, next) => {
-    const rezervare = {
-        id_rezervare: req.body.id_rezervare,
-        id_user: req.body.id_user,
-        id_aliment: req.body.id_aliment
-    }
+    // const rezervare = {
+    //     id_rezervare: req.body.id_rezervare,
+    //     id_user: req.body.id_user,
+    //     id_aliment: req.body.id_alimentz
+    // }
 
     res.status(201).json({
         message: "Rezervare facuta.",
-        rezervare: rezervare
+        // rezervare: rezervare
     });
 });
 

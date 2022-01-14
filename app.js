@@ -3,12 +3,10 @@ const app = express();
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 
+//Database
+const sequelize = require('./config/database.js')
+
 //initializare sequelize
-const Sequelize = require('sequelize');
-const sequelize = new Sequelize({
-    dialect: 'sqlite',
-    storage: './WasteFood.db'
-})
 
 //conectare sqlite
 sequelize
@@ -20,51 +18,15 @@ sequelize
         console.log('Unable to connect to the database: ', err);
     });
 
-sequelize.getQueryInterface().showAllSchemas().then((tableObj) => {
-    console.log(tableObj);
-    // console.log(tableObj.keys(rawAttributes));
-});
+// sequelize.getQueryInterface().showAllSchemas().then((tableObj) => {
+//     console.log(tableObj);
+//     // console.log(tableObj.keys(rawAttributes));
+// });
 
-var Useri = sequelize.define('Useri', {
-    id_user: Sequelize.INTEGER,
-    nume_user: Sequelize.STRING,
-    prenume_user: Sequelize.STRING,
-    mail: Sequelize.STRING,
-    parola: Sequelize.STRING
-});
-
-var Alimente = sequelize.define('Alimente', {
-    id_aliment:
-    {
-        type: Sequelize.INTEGER
-    },
-    nume_aliment: {
-        type: Sequelize.STRING
-    },
-    categorie: {
-        type: Sequelize.STRING
-    },
-    data_expirare:
-    {
-        type: Sequelize.DATE
-    },
-    id_user: {
-        type: Sequelize.INTEGER
-    }
-});
-
-var Grupuri = sequelize.define("Grupuri", {
-    id_grup: Sequelize.INTEGER,
-    id_user: Sequelize.INTEGER,
-    id_user_detinator: Sequelize.INTEGER,
-    nume_grup: Sequelize.STRING
-});
-
-var Rezervari = sequelize.define("Rezervari", {
-    id_rezervare: Sequelize.INTEGER,
-    id_user: Sequelize.INTEGER,
-    id_aliment: Sequelize.INTEGER
-});
+//sincronizare baza de date
+// (async () => {
+//     await sequelize.sync({ force: true });
+// })();
 
 //creare rute
 const rezRoutes = require('./api/routes/rezervari');
@@ -110,4 +72,8 @@ app.use((error, req, res, next) => {
 });
 
 module.exports = app;
-module.exports = Alimente;
+// module.exports = sequelize;
+// export default Aliment;
+// module.exports.Aliment = Aliment;
+// module.exports = Aliment;
+// exports.Aliment = Aliment;
