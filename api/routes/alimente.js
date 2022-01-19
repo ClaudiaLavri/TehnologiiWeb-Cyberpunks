@@ -84,8 +84,15 @@ router.patch('/:idAliment', (req, res, next) => {
 //metoda de delete pentru un aliment
 //returneaza un response cu statusul 200(succes) si mesaj
 router.delete('/:idAliment', (req, res, next) => {
+    al = Aliment.findByPk(req.params.idAliment);
+    Aliment.destroy({
+        where: {
+            id_aliment: req.params.idAliment
+        }
+    })
     res.status(200).json({
-        message: 'Aliment sters!'
+        message: 'Aliment sters!',
+        aliment: al
     });
 });
 
