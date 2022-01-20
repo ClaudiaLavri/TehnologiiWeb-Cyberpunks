@@ -35,11 +35,6 @@ router.get('/:idUser', async (req, res) => {
 });
 
 router.patch('/:idUser', async (req, res) => {
-    // res.status(200).json({
-    //     message: 'User actualizat!',
-    //     idUser: req.params.idUser
-    // });
-
     const id = parseInt(req.params.idUser);
     const data = await User.findOne({
         where: {
