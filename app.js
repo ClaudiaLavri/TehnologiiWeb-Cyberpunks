@@ -18,11 +18,6 @@ sequelize
         console.log('Unable to connect to the database: ', err);
     });
 
-// sequelize.getQueryInterface().showAllSchemas().then((tableObj) => {
-//     console.log(tableObj);
-//     // console.log(tableObj.keys(rawAttributes));
-// });
-
 //sincronizare baza de date
 // (async () => {
 //     await sequelize.sync({ force: true });
@@ -78,8 +73,3 @@ app.use((error, req, res, next) => {
 });
 
 module.exports = app;
-// module.exports = sequelize;
-// export default Aliment;
-// module.exports.Aliment = Aliment;
-// module.exports = Aliment;
-// exports.Aliment = Aliment;
