@@ -15,26 +15,14 @@ router.get('/', (req, res, next) => {
                 data_expirare: al.data_expirare,
                 id_user: al.id_user
             }
-            // let alime = JSON.parse(alim);
             let jsonAlim = JSON.stringify(alim);
             rez = jsonAlim.replace(/'\'/g, '');
-            // let alim = JSON.parse(al);
             jsonObj.push(rez);
         }
         res.status(200).json({
             jsonObj
         })
     })
-    // Aliment.findAll()
-    //     .then(alimente => {
-    //         console.log(alimente);
-    //         res.sendStatus(200).json({
-    //             message: alimente
-    //         })
-    //     })
-    //     // res.status(200).json({
-    //     //     message: "Handling GET requests to /alimente"
-    //     .catch(err => console.log(err));
 });
 
 //metoda de post
@@ -58,12 +46,6 @@ router.post('/', async (req, res, next) => {
 //metoda de get pentru un anumit id
 //returneaza un response cu statusul 200(succes), mesaj si id-ul pe care l-am transmis
 router.get('/:idAliment', (req, res, next) => {
-    // res.status(200).json({
-    //     message: 'You passed an ID',
-    // id: id,
-    // text: req.params.idAliment
-    // });
-
     Aliment.findByPk(req.params.idAliment).then(
         aliment => {
             res.status(200).json({
@@ -76,16 +58,67 @@ router.get('/:idAliment', (req, res, next) => {
 //metoda de patch pentru un aliment
 //returneaza un response cu statusul 200(succes) si mesaj
 router.patch('/:idAliment', (req, res, next) => {
+    const id = parseInt(req.body.idAliment);
+    const data = {
+        nume_aliment: req.body.nume_aliment,
+        categorie: req.body.categorie,
+        data_expirare: req.body.data_expirare,
+    }
+    if (data.nume_aliment != null) {
+        Aliment.update(
+            { nume_aliment: data.nume_aliment },
+            {
+                where: {
+                    id_aliment: id
+                }
+            }
+        )
+    }
     res.status(200).json({
-        message: 'Aliment actualizat!'
-    });
+        message: "Aliment actualizat!",
+        aliment: Aliment.findByPk(req.body.idAliment)
+    })
+    // if (data.categorie != null) {
+    //     Aliment.update(
+    //         { categorie: data.categorie },
+    //         { where: { id_aliment: req.body.idAliment } }
+    //     ).then(result => {
+    //         res.status(200).json({
+    //             message: "Aliment actualizat!",
+    //             aliment: Aliment.findByPk(req.body.idAliment)
+    //         })
+    //     })
+    // }
+    // if (data.data_expirare != null) {
+    //     Aliment.update(
+    //         { data_expirare: data.data_expirare },
+    //         { where: { id_aliment: req.body.idAliment } }
+    //     ).then(result => {
+    //         res.status(200).json({
+    //             message: "Aliment actualizat!",
+    //             aliment: Aliment.findByPk(req.body.idAliment)
+    //         })
+    //     })
+    // }
+
+
+    // res.status(200).json({
+    //     message: 'Aliment actualizat!'
+    // });
 });
 
 //metoda de delete pentru un aliment
 //returneaza un response cu statusul 200(succes) si mesaj
 router.delete('/:idAliment', (req, res, next) => {
+    al = Aliment.findByPk(req.params.idAliment);
+    Aliment.destroy({
+        where: {
+            id_aliment: req.params.idAliment
+        }
+    })
     res.status(200).json({
-        message: 'Aliment sters!'
+        message: 'Aliment sters!',
+        aliment: al
     });
 });
 
