@@ -1,30 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../../models/User.js'); 
+const User = require('../../models/User.js');
 
-router.get('/', (req, res, next) =>{
-    var jsonObj = [];
-    User.findAll().then(users => {
-        for (u of users){
-            var us = {
-                id_user: u.id_user,
-                nume_user: u.nume_user,
-                prenume_user: u.prenume_user,
-                mail: u.mail,
-                parola: u.parola
-            }
-            let jsonUs = JSON.stringify(us);
-            rez = jsonUs.replace(/'\'/g, '');
-            jsonObj.push(rez);
-        }
-    })
+router.get('/', async (req, res) => {
+    const useri = await User.findAll();
     res.status(200).json({
-        jsonObj
-    });
+        message: 'Useri gasiti',
+        useri
+    })
 })
 
-router.post('/', async (req, res, next) => {
-    const user =  await User.create({
+router.post('/', async (req, res) => {
+    const data = await User.create({
         id_user: req.body.id_user,
         nume_user: req.body.nume_user,
         prenume_user: req.body.prenume_user,
@@ -32,44 +19,103 @@ router.post('/', async (req, res, next) => {
         parola: req.body.parola
     });
     res.status(201).json({
-        message: "Handling POST requests to /users",
-        userCreat: user
+        message: "Userul este inserat",
+        userCreat: data
     });
 });
 
-router.get('/:idUser', (req, res, next) => {
-    // res.status(200).json({
-    //     message: "Detalii User",
-    //     idRezervare: req.params.idUser
-    // });
-
-    User.findByPk(req.params.idUser).then(
+router.get('/:idUser', async (req, res) => {
+    await User.findByPk(req.params.idUser).then(
         user => {
-            res.status(200).json({
-                message: user
+            res.status(202).json({
+                user
             })
         }
     )
 });
 
-router.patch('/:idUser', (req, res, next) => {
-    res.status(200).json({
-        message: 'User actualizat!',
-        idUser: req.params.idUser
+router.patch('/:idUser', async (req, res) => {
+    // res.status(200).json({
+    //     message: 'User actualizat!',
+    //     idUser: req.params.idUser
+    // });
+
+    const id = parseInt(req.params.idUser);
+    const data = await User.findOne({
+        where: {
+            id_user: id
+        }
     });
+
+    if (req.body.nume_user != null && req.body.prenume_user != null && req.body.parola != null) {
+        data.nume_user = req.body.nume_user;
+        data.prenume_user = req.body.prenume_user;
+        data.parola = req.body.parola;
+        await data.save();
+        res.status(205).json({
+            message: "User updatat",
+            data
+        })
+    } else if (req.body.nume_user != null && req.body.prenume_user != null) {
+        data.nume_user = req.body.nume_user;
+        data.prenume_user = req.body.prenume_user;
+        await data.save();
+        res.status(205).json({
+            message: "Nume si prenume user updatate",
+            data
+        })
+    } else if (req.body.nume_user != null && req.body.parola != null) {
+        data.nume_user = req.body.nume_user;
+        data.parola = req.body.parola;
+        await data.save();
+        res.status(205).json({
+            message: "Nume si parola user updatate",
+            data
+        })
+    } else if (req.body.prenume_user != null && req.body.parola != null) {
+        data.prenume_user = req.body.prenume_user;
+        data.parola = req.body.parola;
+        await data.save();
+        res.status(205).json({
+            message: "Prenume si parola user updatate",
+            data
+        })
+    } else if (req.body.nume_user != null) {
+        data.nume_user = req.body.nume_user;
+        await data.save();
+        res.status(205).json({
+            message: "Nume user updatat",
+            data
+        })
+    } else if (req.body.prenume_user != null) {
+        data.prenume_user = req.body.prenume_user;
+        await data.save();
+        res.status(205).json({
+            message: "Prenume user updatat",
+            data
+        })
+    } else {
+        data.parola = req.body.parola;
+        await data.save();
+        res.status(205).json({
+            message: "Parola user updatata",
+            data
+        })
+    }
 });
 
-router.delete('/:idUser', (req, res, next) => {
+router.delete('/:idUser', async (req, res) => {
+    id = req.params.idUser;
     us = User.findByPk(req.params.idUser);
-    User.destroy({
-        where:{
-            id_user: req.params.idUser
+    await User.destroy({
+        where: {
+            id_user: id
         }
     })
-    res.status(200).json({
-        message: 'User sters!',
-        idUser: req.params.idUser
-    });
+    res.status(204).json({
+        message: "User sters",
+        user: us
+    })
 });
 
 module.exports = router;

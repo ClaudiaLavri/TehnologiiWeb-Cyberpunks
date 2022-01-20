@@ -27,6 +27,8 @@ sequelize
 // (async () => {
 //     await sequelize.sync({ force: true });
 // })();
+// sequelize.sync({ force: true }).then(() => console.log('DB ready'));
+
 
 //creare rute
 const rezRoutes = require('./api/routes/rezervari');

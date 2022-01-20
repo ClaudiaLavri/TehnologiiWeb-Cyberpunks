@@ -4,8 +4,6 @@ const sequelize = require('../config/database.js');
 const Aliment = sequelize.define('Alimente', {
     id_aliment: {
         type: Sequelize.INTEGER,
-        autoIncrement: true,
-        primaryKey: true
     },
 
     nume_aliment: {

@@ -1,29 +1,18 @@
 const express = require('express');
+const res = require('express/lib/response');
 const router = express.Router();
 const Grup = require('../../models/Grup.js');
 const User = require('../../models/User.js');
 
-router.get('/', (req, res, next) => {
-    var jsonObj = [];
-    Grup.findAll().then(grupuri => {
-        for (g of grupuri) {
-            var gr = {
-                id_grup: g.id_grup,
-                id_user: g.id_user,
-                id_user_detinator: g.id_user_detinator,
-                nume_grup: g.nume_grup
-            }
-            let jsonGr = JSON.stringify(gr);
-            rez = jsonGr.replace(/'\'/g, '');
-            jsonObj.push(rez);
-        }
-        res.status(200).json({
-            jsonObj
-        })
+router.get('/', async (req, res) => {
+    const grupuri = await Grup.findAll();
+    res.status(200).json({
+        message: 'Grupuri gasite',
+        grupuri
     })
 });
 
-router.post('/', async (req, res, next) => {
+router.post('/', async (req, res) => {
     const data = await Grup.create({
         id_grup: req.body.id_grup,
         id_user: req.body.id_user,
@@ -31,37 +20,52 @@ router.post('/', async (req, res, next) => {
         nume_grup: req.body.nume_grup
     })
     res.status(201).json({
-        message: "Handling POST requests to /grupuri",
+        message: "Grupul este inserat",
         grupCreat: data
     });
 });
 
-router.get('/:idGrup', (req, res, next) => {
-    Grup.findByPk(req.params.idGrup).then(
-        grup => {
-            res.status(200).json({
-                message: grup 
-            })
-        }
-    );
-});
-
-router.patch('/:idGrup', (req, res, next) => {
-    res.status(200).json({
-        message: 'Grup actualizat!'
-    });
-});
-
-router.delete('/:idGrup', (req, res, next) => {
-    gr = Grup.findByPk(req.params.idGrup);
-    Grup.destroy({
+router.get('/:idGrup', async (req, res) => {
+    const id = req.params.idGrup;
+    const grup = await Grup.findAll({
         where: {
-            id_grup: req.params.idGrup
+            id_grup: id
         }
     })
-    res.status(200).json({
-        message: 'Grup sters!',
-        grup: gr
+    res.status(202).json({
+        grup
+    })
+});
+
+router.patch('/:idGrup', async (req, res) => {
+    const id = parseInt(req.params.idGrup);
+    const data = await Grup.findAll({
+        where: {
+            id_grup: id
+        }
+    });
+
+    if (req.body.nume_grup) {
+        for (let d of data) {
+            d.nume_grup = req.body.nume_grup;
+            await d.save();
+        }
+        res.status(205).json({
+            message: "Nume grup updatat",
+            data
+        })
+    }
+});
+
+router.delete('/:idGrup', async (req, res) => {
+    const id = req.params.idGrup;
+    await Grup.destroy({
+        where: {
+            id_grup: id
+        }
+    })
+    res.status(204).json({
+        message: "Grup sters"
     })
 })
 

@@ -1,33 +1,21 @@
 const express = require('express');
 const router = express.Router();
 const Aliment = require('../../models/Aliment.js');
+const User = require('../../models/User.js');
 
 //metoda de get
 //returneaza un response cu statusul 200(succes) si mesaj
-router.get('/', (req, res, next) => {
-    var jsonObj = [];
-    Aliment.findAll().then(alimente => {
-        for (al of alimente) {
-            var alim = {
-                id_aliment: al.id_aliment,
-                nume_aliment: al.nume_aliment,
-                categorie: al.categorie,
-                data_expirare: al.data_expirare,
-                id_user: al.id_user
-            }
-            let jsonAlim = JSON.stringify(alim);
-            rez = jsonAlim.replace(/'\'/g, '');
-            jsonObj.push(rez);
-        }
-        res.status(200).json({
-            jsonObj
-        })
+router.get('/', async (req, res) => {
+    const alimente = await Aliment.findAll();
+    res.status(200).json({
+        message: 'Alimente gasite',
+        alimente
     })
 });
 
 //metoda de post
 //returneaza un response cu statusul 201(creare date), mesaj, elementul creat
-router.post('/', async (req, res, next) => {
+router.post('/', async (req, res) => {
     const data = await Aliment.create({
         id_aliment: req.body.id_aliment,
         nume_aliment: req.body.nume_aliment,
@@ -37,86 +25,102 @@ router.post('/', async (req, res, next) => {
     });
 
     res.status(201).json({
-        message: "Handling POST requests to /alimente",
+        message: "Alimentul este inserat",
         alimentCreat: data
 
     });
 });
 
 //metoda de get pentru un anumit id
-//returneaza un response cu statusul 200(succes), mesaj si id-ul pe care l-am transmis
-router.get('/:idAliment', (req, res, next) => {
-    Aliment.findByPk(req.params.idAliment).then(
+//returneaza un response cu statusul 202(succes), mesaj si id-ul pe care l-am transmis
+router.get('/:idAliment', async (req, res) => {
+    await Aliment.findByPk(req.params.idAliment).then(
         aliment => {
-            res.status(200).json({
-                message: aliment
+            res.status(202).json({
+                aliment
             })
         }
     )
 });
 
 //metoda de patch pentru un aliment
-//returneaza un response cu statusul 200(succes) si mesaj
-router.patch('/:idAliment', (req, res, next) => {
-    const id = parseInt(req.body.idAliment);
-    const data = {
-        nume_aliment: req.body.nume_aliment,
-        categorie: req.body.categorie,
-        data_expirare: req.body.data_expirare,
-    }
-    if (data.nume_aliment != null) {
-        Aliment.update(
-            { nume_aliment: data.nume_aliment },
-            {
-                where: {
-                    id_aliment: id
-                }
-            }
-        )
-    }
-    res.status(200).json({
-        message: "Aliment actualizat!",
-        aliment: Aliment.findByPk(req.body.idAliment)
-    })
-    // if (data.categorie != null) {
-    //     Aliment.update(
-    //         { categorie: data.categorie },
-    //         { where: { id_aliment: req.body.idAliment } }
-    //     ).then(result => {
-    //         res.status(200).json({
-    //             message: "Aliment actualizat!",
-    //             aliment: Aliment.findByPk(req.body.idAliment)
-    //         })
-    //     })
-    // }
-    // if (data.data_expirare != null) {
-    //     Aliment.update(
-    //         { data_expirare: data.data_expirare },
-    //         { where: { id_aliment: req.body.idAliment } }
-    //     ).then(result => {
-    //         res.status(200).json({
-    //             message: "Aliment actualizat!",
-    //             aliment: Aliment.findByPk(req.body.idAliment)
-    //         })
-    //     })
-    // }
+//returneaza un response cu statusul 205(succes) si mesaj
+router.patch('/:idAliment', async (req, res) => {
+    const id = parseInt(req.params.idAliment);
+    const data = await Aliment.findOne({
+        where: {
+            id_aliment: id
+        }
+    });
 
-
-    // res.status(200).json({
-    //     message: 'Aliment actualizat!'
-    // });
+    if (req.body.nume_aliment != null && req.body.categorie != null && req.body.data_expirare != null) {
+        data.nume_aliment = req.body.nume_aliment;
+        data.categorie = req.body.categorie;
+        data.data_expirare = req.body.data_expirare;
+        await data.save();
+        res.status(205).json({
+            message: "Aliment updatat",
+            data
+        })
+    } else if (req.body.data_expirare != null && req.body.categorie != null) {
+        data.categorie = req.body.categorie;
+        data.data_expirare = req.body.data_expirare;
+        await data.save();
+        res.status(205).json({
+            message: "Data expirare si categorie aliment updatate",
+            data
+        })
+    } else if (req.body.data_expirare != null && req.body.nume_aliment != null) {
+        data.data_expirare = req.body.data_expirare;
+        data.nume_aliment = req.body.nume_aliment;
+        await data.save();
+        res.status(205).json({
+            message: "Data expirare si nume aliment updatate",
+            data
+        })
+    } else if (req.body.nume_aliment != null && req.body.categorie != null) {
+        data.data_expirare = req.body.data_expirare;
+        data.nume_aliment = req.body.nume_aliment;
+        await data.save();
+        res.status(205).json({
+            message: "Nume si categorie aliment updatate",
+            data
+        })
+    } else if (req.body.nume_aliment != null) {
+        data.nume_aliment = req.body.nume_aliment;
+        await data.save();
+        res.status(205).json({
+            message: "Nume aliment updatat",
+            data
+        })
+    } else if (req.body.categorie != null) {
+        data.categorie = req.body.categorie;
+        await data.save();
+        res.status(205).json({
+            message: "Categorie aliment updatata",
+            data
+        })
+    } else {
+        data.data_expirare = req.body.data_expirare;
+        await data.save();
+        res.status(205).json({
+            message: "Data expirare aliment updatata",
+            data
+        })
+    }
 });
 
 //metoda de delete pentru un aliment
-//returneaza un response cu statusul 200(succes) si mesaj
-router.delete('/:idAliment', (req, res, next) => {
+//returneaza un response cu statusul 204(succes) si mesaj
+router.delete('/:idAliment', async (req, res) => {
+    id = req.params.idAliment;
     al = Aliment.findByPk(req.params.idAliment);
-    Aliment.destroy({
+    await Aliment.destroy({
         where: {
-            id_aliment: req.params.idAliment
+            id_aliment: id
         }
     })
-    res.status(200).json({
+    res.status(204).json({
         message: 'Aliment sters!',
         aliment: al
     });

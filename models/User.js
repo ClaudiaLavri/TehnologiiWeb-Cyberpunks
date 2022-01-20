@@ -7,10 +7,18 @@ var User = sequelize.define('Useri', {
         autoIncrement: true,
         primaryKey: true
     },
-    nume_user: Sequelize.STRING,
-    prenume_user: Sequelize.STRING,
-    mail: Sequelize.STRING,
-    parola: Sequelize.STRING
+    nume_user: {
+        type: Sequelize.STRING
+    },
+    prenume_user: {
+        type: Sequelize.STRING
+    },
+    mail: {
+        type: Sequelize.STRING
+    },
+    parola: {
+        type: Sequelize.STRING
+    }
 });
 
 module.exports = User;
