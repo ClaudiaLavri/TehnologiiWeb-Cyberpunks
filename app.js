@@ -31,6 +31,8 @@ sequelize
 //creare rute
 const rezRoutes = require('./api/routes/rezervari');
 const alimRoutes = require('./api/routes/alimente');
+const usRoutes = require('./api/routes/users');
+const grRoutes = require('./api/routes/grupuri');
 
 //morgan pentru a vedea in terminal requesturile
 //bodyParser pentru a ajuta la parsarea requestului trimis in aplicatii
@@ -53,6 +55,8 @@ app.use((req, res, next) => {
 //rute pentru requesturi
 app.use('/alimente', alimRoutes);
 app.use('/rezervari', rezRoutes);
+app.use('/users', usRoutes);
+app.use('/grupuri', grRoutes);
 
 //error management
 app.use((req, res, next) => {
